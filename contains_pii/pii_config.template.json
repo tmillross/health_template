@@ -1,0 +1,29 @@
+{
+  "_comment": "TEMPLATE FILE - Replace placeholder values with actual PII",
+  "_comment2": "This template is safe to share with LLMs and version control",
+
+  "names": {
+    "FirstName LastName": "<FULL_NAME>",
+    "LastName": "<SURNAME>"
+  },
+  "postcodes": {
+    "AA00 0AA": "<POSTCODE_1>",
+    "BB00 0BB": "<POSTCODE_2>"
+  },
+  "phones": {
+    "_comment": "Phone numbers: Script extracts final 10 digits and redacts them everywhere (catches both 07700900123 and +447700900123 formats)",
+    "07000000000": "<PHONE>"
+  },
+  "emails": {
+    "user@example.com": "<EMAIL_1>",
+    "another@example.com": "<EMAIL_2>"
+  },
+  "addresses": {
+    "Street Name": "<ADDRESS_1>",
+    "Building Name": "<ADDRESS_2>"
+  },
+  "date_of_birth": "YYYY-MM-DD",
+  "remove_nhs_numbers": true,
+  "remove_hospital_ids": false,
+  "remove_dates": false
+}

@@ -1,0 +1,32 @@
+# PII Configuration - NEVER commit actual PII
+pii_config.json
+
+# PII-containing data directory - NEVER commit
+contains_pii/0_raw_inbox/0_to_process/*
+contains_pii/0_raw_inbox/1_processed/*
+contains_pii/1_extracted_text/0_to_process/*
+contains_pii/1_extracted_text/1_processed/*
+
+# Keep the .gitkeep files
+!.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

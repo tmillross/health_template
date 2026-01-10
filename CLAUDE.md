@@ -20,10 +20,19 @@ British English, e.g. organisation not organization.
 
 # Data processing pipeline
 
+## Folder structure pattern
+Each processing stage uses `0_to_process/` for pending items and `1_processed/` for completed originals. This allows tracking what has been processed while preserving source files.
 
+## Pipeline stages
 
 1. **Raw Intake** (`contains_pii/0_raw_inbox/0_to_process/`) - Place raw medical documents here
-2. **Text Extraction** (`contains_pii/1_extracted_text/0_to_process/`) - Text extracted from documents
+2. **Text Extraction** (`contains_pii/1_extracted_text/0_to_process/`) - Markdown extracted from documents
+   - Run: `python3 scripts/0-1_process_inbox/convert_pdfs_to_md.py`
+   - Uses PDF table of contents for section headers
+   - Processed PDFs move to `contains_pii/0_raw_inbox/1_processed/`
 3. **PII Redaction** → Data moves to `no_pii/2_unstructured/0_to_process/` after redaction
 4. **Structuring** (`no_pii/3_structured/`) - Convert unstructured text to structured data
 5. **AI Analysis** (`no_pii/4_ai_outputs/`) - AI processing and analysis outputs
+
+## Logging
+Log file processing actions to `PROCESS_LOG.md` with date, action taken, and files affected.

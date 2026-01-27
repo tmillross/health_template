@@ -1,0 +1,27 @@
+{
+  "_comment": "Configuration for integrated PDF extraction pipeline",
+  "_comment2": "Copy this to extraction_config.json and customize for your project",
+
+  "skip_pages": "",
+  "skip_reason": "Describe why these pages are skipped (e.g., cover pages, duplicates, blank pages)",
+
+  "ocr_settings": {
+    "min_quality_threshold": 80,
+    "flag_for_api_transcription_below": 80
+  },
+
+  "examples": {
+    "skip_pages_syntax": [
+      "Single pages: '1,5,10'",
+      "Ranges: '1-5,10-45,99-100'",
+      "Mixed: '1-5,48,99-100'",
+      "With 'to': '1 to 5, 48, 99 to 100'"
+    ]
+  },
+
+  "notes": [
+    "Skipped pages are completely omitted from final output (not placeholders)",
+    "Use skip_pages for boilerplate, cover pages, or duplicate content",
+    "Pages below OCR quality threshold will be flagged for API transcription (separate from skipped)"
+  ]
+}

@@ -78,8 +78,10 @@ The pipeline follows numbered stages:
 1. **Raw Intake** (`contains_pii/0_raw_inbox/0_to_process/`) - Place raw medical documents here
 2. **Text Extraction** (`contains_pii/1_extracted_text/0_to_process/`) - Text extracted from documents
 3. **PII Redaction** → Data moves to `no_pii/2_unstructured/0_to_process/` after redaction
-4. **Structuring** (`no_pii/3_structured/`) - Convert unstructured text to structured data
+4. **FHIR Structuring** (`no_pii/3_structured/`) - Use Claude Code with FHIR plugin to convert to FHIR format
 5. **AI Analysis** (`no_pii/4_ai_outputs/`) - AI processing and analysis outputs
+
+**After PII removal, use Claude Code with the FHIR plugin to structure health data into the international healthcare standard format (FHIR).**
 
 ## Processing Scripts
 
@@ -103,6 +105,9 @@ source ../health_process/venv/bin/activate
 cd ../health_process/scripts/1-2_remove_pii/
 ./strip_pii.sh
 ```
+
+**Structure data into FHIR format:**
+After PII removal, use Claude Code with the FHIR plugin to structure the cleaned text into standardised FHIR resources. See `../health_process/CLAUDE.md` for detailed FHIR workflow.
 
 ## Logging
 

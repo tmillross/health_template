@@ -6,7 +6,7 @@ This is a template repository for creating new health data processing projects. 
 
 **Heading Numbering:** Do not add arbitrary numbers to markdown headings unless they represent genuinely sequential steps or items (e.g., use `## PII Protection` not `## 1. PII Protection`). Only number headings when they represent actual sequences (e.g., "Step 1", "Phase 2").
 
-## ⚠️ CRITICAL: PII Protection
+## CRITICAL: PII Protection
 
 This repository will contain **sensitive personal health information**.
 
@@ -28,28 +28,33 @@ This repository will contain **sensitive personal health information**.
 health_person_name/
 ├── contains_pii/
 │   ├── 0_raw_inbox/
-│   │   ├── 0_to_process/     ← CONTAINS PII - DO NOT ACCESS
-│   │   └── 1_processed/      ← CONTAINS PII - DO NOT ACCESS
+│   │   ├── nhs_gp/             ← NHS SAR / GP records - CONTAINS PII
+│   │   └── other/              ← Dental, private, wearables - CONTAINS PII
 │   ├── 1_extracted_text/
-│   │   ├── 0_to_process/     ← CONTAINS PII - DO NOT ACCESS
-│   │   └── 1_processed/      ← CONTAINS PII - DO NOT ACCESS
+│   │   ├── nhs_gp/             ← CONTAINS PII - DO NOT ACCESS
+│   │   └── other/              ← CONTAINS PII - DO NOT ACCESS
 │   └── pii_config.template.json
 ├── no_pii/
 │   ├── 2_unstructured/
-│   │   ├── 0_to_process/     ← Safe - PII removed
-│   │   └── 1_processed/      ← Safe - PII removed
-│   ├── 3_structured/         ← Safe - Structured data
-│   └── 4_ai_outputs/         ← Safe - Analysis outputs
+│   │   ├── nhs_gp/             ← Safe - PII removed
+│   │   └── other/              ← Safe - PII removed
+│   ├── 3_structured/           ← Safe - Structured data
+│   └── 4_ai_outputs/           ← Safe - Analysis outputs
 ├── PROCESS_LOG.md
-└── pii_config.json           ← CONTAINS PII - DO NOT ACCESS
+└── pii_config.json             ← CONTAINS PII - DO NOT ACCESS
 ```
+
+### Source type subfolders
+
+- **`nhs_gp/`** — NHS Subject Access Request outputs, GP records. Processed with `extract_sar.py` (single large PDF, needs OCR).
+- **`other/`** — Dental, private providers, wearables, standalone documents. Processed with `extract_batch.py` (multiple simple PDFs, embedded text only).
 
 ## File Naming Convention
 
 Use underscores and lower_case, not dashes:
-- ✓ `data_summary.md`
-- ✗ `data-summary.md`
-- ✗ `Data Summary.md` (no spaces)
+- data_summary.md (correct)
+- data-summary.md (incorrect)
+- Data Summary.md (incorrect, no spaces)
 
 British English: "organisation" not "organization"
 
@@ -73,61 +78,105 @@ Repository siblings:
 
 ## Processing Pipeline
 
-The pipeline follows numbered stages:
+The pipeline follows numbered stages. Files stay in place after processing — `PROCESS_LOG.md` records what has been done.
 
-1. **Raw Intake** (`contains_pii/0_raw_inbox/0_to_process/`) - Place raw medical documents here
-2. **Text Extraction** (`contains_pii/1_extracted_text/0_to_process/`) - Text extracted from documents
-3. **PII Redaction** → Data moves to `no_pii/2_unstructured/0_to_process/` after redaction
+1. **Raw Intake** (`contains_pii/0_raw_inbox/nhs_gp/` or `other/`) - Place raw medical documents here
+2. **Text Extraction** (`contains_pii/1_extracted_text/nhs_gp/` or `other/`) - Text extracted from documents
+3. **PII Redaction** → Data moves to `no_pii/2_unstructured/nhs_gp/` or `other/` after redaction
 4. **FHIR Structuring** (`no_pii/3_structured/`) - Use Claude Code with FHIR plugin to convert to FHIR format
 5. **AI Analysis** (`no_pii/4_ai_outputs/`) - AI processing and analysis outputs
 
-**After PII removal, use Claude Code with the FHIR plugin to structure health data into the international healthcare standard format (FHIR).**
+**After PII removal, use Claude Code with the FHIR plugin to structure clinical health data into FHIR format.** FHIR is ideal for clinical data (NHS records, GP records, lab results, medications, diagnoses). For wearables, genetic data, and other non-clinical data, preserve original formats. See `../health_process/system_reference/fhir_data_compatibility.md` for guidance.
 
 ## Processing Scripts
 
-All processing scripts are in `../health_process/scripts/`. See `../health_process/CLAUDE.md` for:
-- PII removal scripts
-- PDF to markdown conversion
-- Text cleanup tools
-- Complete pipeline documentation
+All processing scripts are in `../health_process/scripts/`. See `../health_process/CLAUDE.md` for complete pipeline documentation.
 
 ### Quick Commands
 
-**Extract text from PDFs:**
+**Extract text from NHS SAR PDF (single PDF, with OCR):**
 ```bash
 source ../health_process/venv/bin/activate
-python3 ../health_process/scripts/0-1_process_inbox/convert_pdfs_to_md.py
+python3 scripts/0-1_extract_text/extract_sar.py contains_pii/0_raw_inbox/nhs_gp/sar_document.pdf
 ```
 
-**Remove PII:**
+**Extract text from other PDFs (batch, embedded text only):**
 ```bash
 source ../health_process/venv/bin/activate
-cd ../health_process/scripts/1-2_remove_pii/
-./strip_pii.sh
+python3 scripts/0-1_extract_text/extract_batch.py
+```
+
+**Remove PII (single file):**
+```bash
+source ../health_process/venv/bin/activate
+python3 scripts/1-2_remove_pii/strip_pii.py <input_file> <output_dir>
+```
+
+**Remove PII (batch, preserves nhs_gp/other/ structure):**
+```bash
+source ../health_process/venv/bin/activate
+python3 scripts/1-2_remove_pii/strip_pii.py --batch contains_pii/1_extracted_text/ no_pii/2_unstructured/
 ```
 
 **Structure data into FHIR format:**
 After PII removal, use Claude Code with the FHIR plugin to structure the cleaned text into standardised FHIR resources. See `../health_process/CLAUDE.md` for detailed FHIR workflow.
 
+## Script Development Guidelines
+
+### Language Preferences
+
+**Always prefer Python for scripts** unless there's a specific reason to use Bash:
+
+- ✅ **Use Python for:** Data processing, file manipulation, text parsing, API calls, complex logic
+- ⚠️ **Use Bash only for:** Simple system commands, environment setup, git operations
+
+**Avoid writing `.sh` shell scripts when Python is sufficient.** Python provides better error handling, readability, and maintainability.
+
+### Tool Selection
+
+**Use the FHIR plugin (`fhir-developer` skill) when appropriate:**
+
+- Creating or fixing FHIR resources interactively
+- Converting unstructured clinical text to FHIR format
+- Getting guidance on FHIR R4 compliance
+- Working through validation errors
+
+**Use Python scripts for:**
+
+- Batch processing and automation
+- Validation of multiple files
+- Repeatable operations
+
+**FHIR validation:** Use `python3 scripts/3_validate_fhir/validate_fhir.py no_pii/3_structured/` to validate FHIR files with the `fhir.resources` library.
+
 ## Logging
 
-Log all processing actions to `PROCESS_LOG.md` at the repository root. This file starts empty in the template and is filled as processing begins for a specific client/person.
+Log **every** pipeline step to `PROCESS_LOG.md` at the repository root. Files stay in place after processing — `PROCESS_LOG.md` is the sole record of what has been processed and when.
 
-Format:
+All Python scripts log automatically via the shared `scripts/utils/log_utils.py` utility. The format includes the command used for reproducibility:
+
 ```markdown
 ## YYYY-MM-DD
 
-**Action:** [What was done]
-**Files:** [Files affected]
-**Result:** [Outcome]
+- **Text extraction**: `file.pdf` → `1_extracted_text/other/output.md`
+  - Command: `python3 scripts/0-1_extract_text/extract_batch.py`
+- **PII removal (batch)**: `contains_pii/1_extracted_text/` → `no_pii/2_unstructured/`
+  - Command: `python3 scripts/1-2_remove_pii/strip_pii.py --batch contains_pii/1_extracted_text/ no_pii/2_unstructured/`
+  - Result: 5 files processed, 42 total redactions
+- **FHIR structuring (LLM)**: `no_pii/2_unstructured/` → `no_pii/3_structured/`
+  - Files: patient.json, conditions.json, medications_current.json, ...
+- **FHIR validation**: `no_pii/3_structured/` (10 files)
+  - Command: `python3 scripts/3_validate_fhir/validate_fhir.py no_pii/3_structured/ no_pii/3_structured/fhir_validation_report.md`
+  - Result: 6 passed, 4 failed
 ```
 
-## File Movement
+### FHIR structuring (LLM step)
 
-After processing:
-1. Output files go to next stage's `0_to_process/` folder
-2. Original files move from `0_to_process/` to `1_processed/`
-3. Log the movement in `PROCESS_LOG.md`
+The FHIR structuring step (stage 2→3) is performed interactively by Claude Code, not by a script. **After completing FHIR structuring, always log the action to `PROCESS_LOG.md`** with:
+
+- **Action**: "FHIR structuring (LLM)"
+- **Detail**: Source and destination directories
+- **Files**: List of FHIR resources created or updated
 
 ## References
 

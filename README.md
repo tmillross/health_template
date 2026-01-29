@@ -11,11 +11,11 @@ This directory contains all data that includes PII and should be treated as sens
 ```
 contains_pii/
 ├── 0_raw_inbox/
-│   ├── 0_to_process/      Raw documents awaiting processing
-│   └── 1_processed/       Raw documents that have been processed
+│   ├── nhs_gp/             NHS SAR outputs, GP records
+│   └── other/              Dental, private, wearables, standalone docs
 ├── 1_extracted_text/
-│   ├── 0_to_process/      Extracted text awaiting PII redaction
-│   └── 1_processed/       Extracted text that has been redacted
+│   ├── nhs_gp/             Extracted text from NHS/GP documents
+│   └── other/              Extracted text from other documents
 └── pii_config.template.json  Template for PII redaction configuration
 ```
 
@@ -26,28 +26,31 @@ This directory contains data with all PII removed and is safe for broader analys
 ```
 no_pii/
 ├── 2_unstructured/
-│   ├── 0_to_process/      Anonymised text awaiting structuring
-│   └── 1_processed/       Text that has been structured
-├── 3_structured/          Structured, anonymised data
-└── 4_ai_outputs/          AI processing results and analyses
+│   ├── nhs_gp/             Anonymised NHS/GP text
+│   └── other/              Anonymised other text
+├── 3_structured/           Structured, anonymised data
+└── 4_ai_outputs/           AI processing results and analyses
 ```
+
+### Source type subfolders
+
+- **`nhs_gp/`** — NHS Subject Access Request outputs, GP records. These are typically large single PDFs requiring OCR and semi-supervised extraction.
+- **`other/`** — Dental records, private provider documents, wearable data exports, standalone reports. Typically multiple smaller PDFs with embedded text.
 
 ## Processing Pipeline
 
-The pipeline follows a numbered sequence:
+The pipeline follows a numbered sequence. Files stay in place after processing — `PROCESS_LOG.md` records what has been done and when.
 
-1. **Raw Intake** (`contains_pii/0_raw_inbox/0_to_process/`) - Place raw medical documents here
-2. **Text Extraction** (`contains_pii/1_extracted_text/0_to_process/`) - Text extracted from documents
-3. **PII Redaction** → Data moves to `no_pii/2_unstructured/0_to_process/` after redaction
-4. **Structuring** (`no_pii/3_structured/`) - Convert unstructured text to structured data
+1. **Raw Intake** (`contains_pii/0_raw_inbox/nhs_gp/` or `other/`) - Place raw medical documents here
+2. **Text Extraction** (`contains_pii/1_extracted_text/nhs_gp/` or `other/`) - Text extracted from documents
+3. **PII Redaction** → Data moves to `no_pii/2_unstructured/nhs_gp/` or `other/` after redaction
+4. **Structuring** (`no_pii/3_structured/`) - Convert unstructured text to structured FHIR format
 5. **AI Analysis** (`no_pii/4_ai_outputs/`) - AI processing and analysis outputs
 
-In the folders: `0_raw_inbox`, `1_extracted_text`, `2_unstructured` there should be no files in the root, only in the 2 subfolders: `0_to_process` and `1_processed`. 
+### Two extraction workflows
 
-## File movement, creation & logging
-
-After a file has been processed (e.g. from 0->1 or 2->3), the original file should be moved from `0_to_process` to `1_processed`.
-The repo root file: PROCESS_LOG.md should be used for documenting all file movements and creation, including relative filepaths from the root.
+- **NHS SAR extraction** (`extract_sar.py`): Processes a single large PDF from `nhs_gp/` using embedded text + OCR, with watermark removal and intelligent source selection.
+- **Batch extraction** (`extract_batch.py`): Extracts embedded text from all PDFs in `other/`. No OCR needed.
 
 ## PII Configuration
 

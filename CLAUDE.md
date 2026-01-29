@@ -147,7 +147,9 @@ After PII removal, use Claude Code with the FHIR plugin to structure the cleaned
 - Validation of multiple files
 - Repeatable operations
 
-**FHIR validation:** Use `python3 scripts/3_validate_fhir/validate_fhir.py no_pii/3_structured/` to validate FHIR files with the `fhir.resources` library.
+**FHIR structuring guide:** See `scripts/3_structure_fhir/FHIR_STRUCTURING_GUIDE.md` for comprehensive LLM instructions on FHIR structuring, including extraction targets, R4 compliance rules, and decisions log.
+
+**FHIR validation:** Use `python3 scripts/3_structure_fhir/validate_fhir.py no_pii/3_structured/` to validate FHIR files with the `fhir.resources` library.
 
 ## Logging
 
@@ -166,7 +168,7 @@ All Python scripts log automatically via the shared `scripts/utils/log_utils.py`
 - **FHIR structuring (LLM)**: `no_pii/2_unstructured/` → `no_pii/3_structured/`
   - Files: patient.json, conditions.json, medications_current.json, ...
 - **FHIR validation**: `no_pii/3_structured/` (10 files)
-  - Command: `python3 scripts/3_validate_fhir/validate_fhir.py no_pii/3_structured/ no_pii/3_structured/fhir_validation_report.md`
+  - Command: `python3 scripts/3_structure_fhir/validate_fhir.py no_pii/3_structured/ no_pii/3_structured/fhir_validation_report.md`
   - Result: 6 passed, 4 failed
 ```
 

@@ -1,0 +1,5 @@
+{
+    "_comment": "lloyd_george_scans is a contiguous page range (e.g. 25-43) that will not have any automatic extraction attempt made.",
+    "lloyd_george_scans": "124-170, 335",
+    "completely_skip": ""
+}

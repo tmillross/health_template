@@ -1,10 +1,13 @@
 {
-  "_comment": "TEMPLATE FILE - Replace placeholder values with actual PII",
-  "_comment2": "This template is safe to share with LLMs and version control",
-
+  "_comment": "TEMPLATE FILE - Replace placeholder key values with actual PII",
+  
   "names": {
     "FirstName LastName": "<FULL_NAME>",
     "LastName": "<SURNAME>"
+  },
+  "birth_dates": {
+    "_comment": "YYYY-MM-DD - the script will also redact other ways this date can be written (e.g. 2000-11-12 might be 12th November, 2000)",
+    "1954-11-11": "<DATE_OF_BIRTH_1>"
   },
   "postcodes": {
     "AA00 0AA": "<POSTCODE_1>",
@@ -12,7 +15,8 @@
   },
   "phones": {
     "_comment": "Phone numbers: Script extracts final 10 digits and redacts them everywhere (catches both 07700900123 and +447700900123 formats)",
-    "07000000000": "<PHONE>"
+    "07000000000": "<PHONE_1>",
+    "02080000000": "<PHONE_2>"
   },
   "emails": {
     "user@example.com": "<EMAIL_1>",
@@ -21,9 +25,5 @@
   "addresses": {
     "Street Name": "<ADDRESS_1>",
     "Building Name": "<ADDRESS_2>"
-  },
-  "date_of_birth": "YYYY-MM-DD",
-  "remove_nhs_numbers": true,
-  "remove_hospital_ids": false,
-  "remove_dates": false
+  }
 }

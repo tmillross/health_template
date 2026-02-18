@@ -20,8 +20,6 @@ This repository will contain **sensitive personal health information**.
 - `*.md` documentation files
 - Template configuration files (`pii_config.template.json`)
 
-**See `../health_process/PII_PROTECTION_GUIDE.md` for complete details.**
-
 ## Repository Structure
 
 ```
@@ -183,6 +181,5 @@ The FHIR structuring step (stage 2→3) is performed interactively by Claude Cod
 ## References
 
 - **Detailed processing guide:** `../health_process/CLAUDE.md`
-- **PII protection:** `../health_process/PII_PROTECTION_GUIDE.md`
 - **File naming standards:** `../health_process/system_reference/naming_convention.md`
 - **SAR structuring prompt:** `../health_process/system_reference/SAR_output_explainer_prompt.md`

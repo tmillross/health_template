@@ -1,13 +1,12 @@
-# PII Configuration - NEVER commit actual PII
+# PII Configuration — NEVER commit actual PII
 pii_config.json
+page_config.json
 
-# PII-containing data directory - NEVER commit
-contains_pii/0_raw_inbox/0_to_process/*
-contains_pii/0_raw_inbox/1_processed/*
-contains_pii/1_extracted_text/0_to_process/*
-contains_pii/1_extracted_text/1_processed/*
+# PII-containing data — NEVER commit
+contains_pii/0_raw_inbox/**
+contains_pii/1_extracted_text/**
 
-# Keep the .gitkeep files
+# Keep directory structure via .gitkeep
 !.gitkeep
 
 # Python

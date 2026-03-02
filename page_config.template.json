@@ -1,0 +1,8 @@
+{
+  "_comment": "TEMPLATE — Copy to page_config.json and fill in page ranges from the SAR PDF",
+  "_instructions": "Open the SAR PDF and identify: where attachments start, which pages are Lloyd George scans, and any pages to skip (blank, duplicate, etc.). Use 'none' for any field that doesn't apply.",
+
+  "attachments": "22-124",
+  "lloyd_george_scans": "30-103",
+  "completely_skip": "none"
+}

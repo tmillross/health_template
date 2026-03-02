@@ -1,0 +1,12 @@
+{
+  "_comment": "TEMPLATE — Copy to pii_config.json and replace placeholder values with actual PII",
+  "_format": "All sections use simple lists. Replacement labels are auto-generated (NAMES_1, PHONES_2, etc.)",
+
+  "names": ["FirstName LastName", "LastName"],
+  "birth_dates": ["1990-01-15"],
+  "postcodes": ["SW1A 1AA", "EC2R 8AH"],
+  "phones": ["07700900123", "02071234567"],
+  "emails": ["user@example.com"],
+  "addresses": ["123 Example Street", "Example Building"],
+  "nhs_numbers": ["1234567890"]
+}

@@ -38,10 +38,10 @@ health_<client>/
 
 Create from templates before running extraction:
 
-| Template | Copy to | Purpose |
-|----------|---------|---------|
-| `pii_config.template.json` | `pii_config.json` | PII values to redact (names, DOB, phones, postcodes, etc.) |
-| `page_config.template.json` | `page_config.json` | SAR PDF page ranges for 3-fork split |
+| Template                     | Copy to              | Purpose                                                      |
+| ---------------------------- | -------------------- | ------------------------------------------------------------ |
+| `pii_config.template.json`   | `pii_config.json`    | PII values to redact (names, DOB, phones, postcodes, etc.)   |
+| `page_config.template.json`  | `page_config.json`   | SAR PDF page ranges for 3-fork split                         |
 
 Both `pii_config.json` and `page_config.json` are gitignored.
 
@@ -112,7 +112,7 @@ This runs pre-processing (watermark removal, PII removal from PDF, split into 3 
 
 Output: up to 3 PII-redacted `.md` files in `no_pii/2_unstructured/`
 
-5. Run FHIR structuring:
+1. Run FHIR structuring:
 
 ```bash
 python3 ../health_process/scripts/fhir/structure_sar.py <DOC_NAME> --mode interactive
